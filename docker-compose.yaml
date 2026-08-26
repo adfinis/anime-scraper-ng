@@ -1,0 +1,38 @@
+name: anime-scraper-ng
+
+# Source is mounted into every service and each one watches it, so editing code
+# takes effect without a rebuild. Only dependency changes need `--build`.
+services:
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+
+  backend-python:
+    build: ./backend-python
+    # the Flask CLI reloader restarts the app when a .py file changes
+    command: flask --app app run --host 0.0.0.0 --port 8000 --debug
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend-python:/app
+      - ./data:/data:ro
+    # so `breakpoint()` can drop into pdb via `docker compose attach`
+    stdin_open: true
+    tty: true
+
+  backend-node:
+    build: ./backend-node
+    # node --watch is built in; no nodemon needed.
+    # --inspect exposes the V8 debugger on 9229 for Chrome DevTools / VS Code.
+    command: node --watch --inspect=0.0.0.0:9229 server.js
+    ports:
+      - "8001:8001"
+      - "9229:9229"
+    volumes:
+      - ./backend-node:/app
+      # keep the image's install; the bind mount above would otherwise hide it
+      - /app/node_modules
+      - ./data:/data:ro

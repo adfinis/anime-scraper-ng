@@ -1,0 +1,6 @@
+node_modules/
+__pycache__/
+*.db
+.venv/
+.candidate-export/
+.pytest_cache/

@@ -1,0 +1,16 @@
+{
+  "name": "anime-scraper-ng-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "license": "GPL-3.0-or-later",
+  "packageManager": "pnpm@11.20.0",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1"
+  }
+}
