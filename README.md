@@ -149,6 +149,15 @@ Firefox. Pick one of:
 `console.log` plus `docker compose logs -f backend-node` is often quicker than
 any of them.
 
+**The database.** Both containers ship the `sqlite3` CLI, and both seed their
+database to `/tmp/animes.db` (override with the `DB_PATH` environment
+variable). Open a shell into either one and poke at it:
+
+```bash
+docker compose exec backend-python sqlite3 /tmp/animes.db
+docker compose exec backend-node sqlite3 /tmp/animes.db
+```
+
 ## The exercise
 
 Three parts: fix what is broken, build something new, then pin one of the
