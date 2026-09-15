@@ -63,8 +63,6 @@ async function fetchAnimes() {
 }
 
 async function loadMore() {
-  if (loading || !hasMore) return;
-
   loading = true;
   statusMsg.textContent = "Loading...";
 
@@ -94,17 +92,18 @@ function resetAndLoad() {
 }
 
 searchInput.addEventListener("input", (event) => {
+  const searchTerm = event.target.value.trim();
   let debounceTimer;
 
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
-    query = event.target.value.trim();
+    query = searchTerm;
     resetAndLoad();
   }, DEBOUNCE_MS);
 });
 
 new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting) {
+  if (entries[0].isIntersecting && !loading && hasMore) {
     loadMore();
   }
 }).observe(loadMoreTrigger);
