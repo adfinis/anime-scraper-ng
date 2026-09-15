@@ -1,6 +1,6 @@
 """Tests for the Flask backend.
 
-    pytest
+    docker compose exec backend-python pytest
 
 The environment has to be set up before importing app, because the module
 seeds its SQLite database on import.

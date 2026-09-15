@@ -77,48 +77,33 @@ Response:
 the [AniList API](https://graphql.anilist.co) (500 most popular, safe for work)
 and keeps only the four fields the frontend needs.
 
-## Running without Docker
-
-```bash
-# Flask
-cd backend-python
-pip install -r requirements.txt
-DATA_PATH=../data/anime.json DB_PATH=/tmp/animes.db python app.py
-
-# Express (uses pnpm)
-cd backend-node
-pnpm install
-DATA_PATH=../data/anime.json DB_PATH=/tmp/animes-node.db node server.js
-
-# Frontend - any static server
-cd frontend && python3 -m http.server 8080
-```
-
-> `pnpm` blocks dependency build scripts by default. `better-sqlite3` is a
-> native module, so `pnpm-workspace.yaml` allows its build explicitly - no
-> `pnpm approve-builds` step needed.
-
----
-
 ## Running the tests
 
-Each backend has a small test suite covering the list endpoint. Run the one for
-the backend you picked:
+Each backend has a small test suite covering the list endpoint. The tests run
+inside the containers, like everything else here - there is nothing to install
+on your machine. With the stack up, run the suite for the backend you picked:
 
 ```bash
-# Flask
-cd backend-python
-pip install -r requirements.txt
-pytest
+# Flask - pytest is already in the image
+docker compose exec backend-python pytest
 
-# Express - uses Node's built-in test runner, nothing extra to install
-cd backend-node
-pnpm install
-pnpm test
+# Express - Node's built-in test runner, nothing extra to install
+docker compose exec backend-node pnpm test
 ```
 
-The tests import the app directly and seed a throwaway SQLite database, so you
-do not need `docker compose` running. They also switch the artificial delay off.
+Test files are part of the bind-mounted source, so editing a test and running
+it again needs no rebuild.
+
+If the stack is not up, `run` starts a throwaway container instead:
+
+```bash
+docker compose run --rm backend-python pytest
+docker compose run --rm backend-node pnpm test
+```
+
+The tests import the app directly and seed their own throwaway SQLite database,
+so nothing has to be listening on port 8000 or 8001. They also switch the
+artificial delay off.
 
 ## Debugging
 

@@ -1,7 +1,7 @@
 /**
  * Tests for the Express backend.
  *
- *   pnpm test
+ *   docker compose exec backend-node pnpm test
  *
  * Uses Node's built-in test runner - no test framework to install.
  */
