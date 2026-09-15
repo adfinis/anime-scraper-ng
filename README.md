@@ -25,7 +25,7 @@ backends; the tests set them to zero.
 ## Running it
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
 Then open <http://localhost:8080>.
