@@ -4,26 +4,32 @@ name: anime-scraper-ng
 # takes effect without a rebuild. Only dependency changes need `--build`.
 services:
   frontend:
-    image: nginx:alpine
+    container_name: frontend
+    image: docker.io/library/nginx:alpine
     ports:
       - "8080:80"
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend:/usr/share/nginx/html:ro,z
 
   backend-python:
+    container_name: backend-python
     build: ./backend-python
     # the Flask CLI reloader restarts the app when a .py file changes
     command: flask --app app run --host 0.0.0.0 --port 8000 --debug
+    environment:
+      PYTHONPYCACHEPREFIX: /tmp/pycache
+      PYTEST_ADDOPTS: -o cache_dir=/tmp/pytest_cache
     ports:
       - "8000:8000"
     volumes:
-      - ./backend-python:/app
-      - ./data:/data:ro
-    # so `breakpoint()` can drop into pdb via `docker compose attach`
+      - ./backend-python:/app:z
+      - ./data:/data:ro,z
+    # so `breakpoint()` can drop into pdb via an attach
     stdin_open: true
     tty: true
 
   backend-node:
+    container_name: backend-node
     build: ./backend-node
     # node --watch is built in; no nodemon needed.
     # --inspect exposes the V8 debugger on 9229 for Chrome DevTools / VS Code.
@@ -32,7 +38,7 @@ services:
       - "8001:8001"
       - "9229:9229"
     volumes:
-      - ./backend-node:/app
+      - ./backend-node:/app:z
       # keep the image's install; the bind mount above would otherwise hide it
       - /app/node_modules
-      - ./data:/data:ro
+      - ./data:/data:ro,z
